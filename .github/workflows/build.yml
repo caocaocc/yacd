@@ -1,0 +1,114 @@
+name: Build yacd
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      # https://github.com/actions/deploy-pages
+      pages: write
+      id-token: write
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Compare latest tags and set variables
+        run: |
+          upstreamLatestTag=$(curl -sSL --connect-timeout 5 --retry 5 -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/haishanh/yacd/releases/latest | grep "tag_name" | cut -d\" -f4)
+          echo "RELEASE_NAME=$upstreamLatestTag" >> $GITHUB_ENV
+          echo "TAG_NAME=$upstreamLatestTag" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Checkout haishanh/yacd
+        uses: actions/checkout@v3
+        with:
+          repository: haishanh/yacd
+          
+      - name: Set yacd
+        run: |
+          sed -i 's/Yet Another Clash Dashboard/Yet Another Dashboard/g' index.html
+          sed -i 's/<html lang="en">/<html lang="zh" translate="no">/g' index.html
+          
+          sed -i 's/name="Clash"/name="sing-box"/g' src/components/about/About.tsx
+          sed -i 's/link="https:\/\/github\.com\/Dreamacro\/clash"/link="https:\/\/github.com\/SagerNet\/sing-box"/g' src/components/about/About.tsx
+          
+          sed -i 's/<div className={s0.root}>/<div className={s0.root} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx
+          sed -i 's/<div className={s0.sep}>/<div className={s0.sep} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx
+
+          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/www.gstatic.com\/generate_204/g' src/api/proxies.ts
+          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/www.gstatic.com\/generate_204/g' src/store/app.ts
+
+          sed -i 's/theme: '\''dark'\''/theme: '\''light'\''/g' src/store/app.ts
+          sed -i 's/proxySortBy: '\''Natural'\''/proxySortBy: '\''LatencyAsc'\''/g' src/store/app.ts
+          sed -i 's/autoCloseOldConns: false/autoCloseOldConns: true/g' src/store/app.ts
+
+          sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& prop \!\=\= '\''GLOBAL'\''/g' src/store/proxies.tsx
+          sed -i '/(prop === '\''GLOBAL'\'')/{N;N;d;}' src/store/proxies.tsx
+
+          sed -i 's/^  switch (lng) {/  switch (lng) {\n    case '\''en'\'':\n      p = import('\''src\/i18n\/en'\'');\n      break;\n    case '\''zh'\'':\n    case '\''zh-CN'\'':\n    default:\n      p = import('\''src\/i18n\/zh'\'');\n      break;\n    }/g' src/misc/i18n.ts
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+          run_install: true
+
+      - name: Lint
+        run: pnpm lint
+      - name: Set git commit sha
+        id: revparse
+        run: |
+          echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Build
+        run: pnpm build
+
+      - name: Download pac.txt
+        run: curl -sSL -o "public/pac.txt" "https://raw.githubusercontent.com/caocaocc/tmp/main/pac.txt"
+          
+      - name: Create Tar Ball
+        run: tar czf yacd.tar.gz public
+        
+      - name: Release and upload assets
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: false
+          files: yacd.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_DIR: public
+          BRANCH: gh-pages
+        run: |
+          cd $PUBLISH_DIR
+          ls -l
+          git init
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@noreply.github.com"
+          touch .nojekyll
+          git add .
+          git status
+          git commit -m "Push to gh-pages"
+          git push -f https://$GITHUB_ACTOR:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:$BRANCH
