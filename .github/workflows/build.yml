@@ -54,23 +54,22 @@ jobs:
           
           sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& prop \!\=\= '\''GLOBAL'\''/g' src/store/proxies.tsx
           sed -i '/(prop === '\''GLOBAL'\'')/{N;N;d;}' src/store/proxies.tsx
-          
-          sed -i '1a\  proxy: '\''Proxy'\'',\n  direct: '\''Direct'\'',\n  china: '\''China'\'',\n  test_latency: '\''Test latency'\'',\n  test_latency_tip: '\''The latency value does not reflect network speed, it only indicates a healthy connection to the node.'\'',' src/i18n/en.ts
-          sed -i '1a\  proxy: '\''节点'\'',\n  direct: '\''直连'\'',\n  china: '\''国内流量'\'',\n  test_latency: '\''延迟测速'\'',\n  test_latency_tip: '\''延迟大小不能反映网络速度,仅表示连接节点正常.'\'',' src/i18n/zh.ts
-          
-          sed -i '1i import { useTranslation } from '\''react-i18next'\'';' src/components/proxies/Proxy.tsx
-          sed -i '140i const { t } = useTranslation();' src/components/proxies/Proxy.tsx
-          sed -i "s|<span>{name}</span>|<span>{name === 'proxy' ? t('proxy') : name === 'direct' ? t('direct') : name === 'china' ? t('china') : name}</span>|g" src/components/proxies/Proxy.tsx
-          
-          sed -i '1i import { useTranslation } from '\''react-i18next'\'';' src/components/proxies/ProxyGroup.tsx
-          sed -i '78i const { t } = useTranslation();' src/components/proxies/ProxyGroup.tsx
-          sed -i "s|name={name}|name={name === 'proxy' ? t('proxy') : name === 'direct' ? t('direct') : name === 'china' ? t('china') : name}|g" src/components/proxies/ProxyGroup.tsx
-          sed -i "s/{'Test latency'}/{t('test_latency_tip')}/g" src/components/proxies/ProxyGroup.tsx
-          sed -i '/animate={testingLatency\.value}/a \        <div style={{ fontSize: "12px", marginLeft: "2px" }}>{t("test_latency")}</div>' src/components/proxies/ProxyGroup.tsx
-          
-          sed -i 's/"Toggle collapsible section"/"Toggle collapsible section" style={{ border: '\''1px solid #555'\'' }}/' src/components/CollapsibleSectionHeader.tsx
-          
           sed -i 's/^  switch (lng) {/  switch (lng) {\n    case '\''en'\'':\n      p = import('\''src\/i18n\/en'\'');\n      break;\n    case '\''zh'\'':\n    case '\''zh-CN'\'':\n    default:\n      p = import('\''src\/i18n\/zh'\'');\n      break;\n    }/g' src/misc/i18n.ts
+          
+          # sed -i '1a\  proxy: '\''Proxy'\'',\n  direct: '\''Direct'\'',\n  china: '\''China'\'',\n  test_latency: '\''Test latency'\'',\n  test_latency_tip: '\''The latency value does not reflect network speed, it only indicates a healthy connection to the node.'\'',' src/i18n/en.ts
+          # sed -i '1a\  proxy: '\''节点'\'',\n  direct: '\''直连'\'',\n  china: '\''国内流量'\'',\n  test_latency: '\''延迟测速'\'',\n  test_latency_tip: '\''延迟大小不能反映网络速度,仅表示连接节点正常.'\'',' src/i18n/zh.ts
+          
+          # sed -i '1i import { useTranslation } from '\''react-i18next'\'';' src/components/proxies/Proxy.tsx
+          # sed -i '140i const { t } = useTranslation();' src/components/proxies/Proxy.tsx
+          # sed -i "s|<span>{name}</span>|<span>{name === 'proxy' ? t('proxy') : name === 'direct' ? t('direct') : name === 'china' ? t('china') : name}</span>|g" src/components/proxies/Proxy.tsx
+          
+          # sed -i '1i import { useTranslation } from '\''react-i18next'\'';' src/components/proxies/ProxyGroup.tsx
+          # sed -i '78i const { t } = useTranslation();' src/components/proxies/ProxyGroup.tsx
+          # sed -i "s|name={name}|name={name === 'proxy' ? t('proxy') : name === 'direct' ? t('direct') : name === 'china' ? t('china') : name}|g" src/components/proxies/ProxyGroup.tsx
+          # sed -i "s/{'Test latency'}/{t('test_latency_tip')}/g" src/components/proxies/ProxyGroup.tsx
+          # sed -i '/animate={testingLatency\.value}/a \        <div style={{ fontSize: "12px", marginLeft: "2px" }}>{t("test_latency")}</div>' src/components/proxies/ProxyGroup.tsx
+          
+          # sed -i 's/"Toggle collapsible section"/"Toggle collapsible section" style={{ border: '\''1px solid #555'\'' }}/' src/components/CollapsibleSectionHeader.tsx
           
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
