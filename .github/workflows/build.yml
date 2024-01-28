@@ -52,7 +52,8 @@ jobs:
           sed -i 's/number < 400/number < 2400/g' src/components/proxies/Proxy.tsx
           sed -i 's/? latency\.number/? Math.round(latency.number \/ 6)/g' src/components/proxies/ProxyLatency.tsx
           
-          sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& prop \!\=\= '\''GLOBAL'\''/g' src/store/proxies.tsx
+          # sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& prop \!\=\= '\''GLOBAL'\''/g' src/store/proxies.tsx
+          sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& (prop \!\=\= '\''GLOBAL'\'' || prop \!\=\= '\''auto'\'')/g' src/store/proxies.tsx
           sed -i '/(prop === '\''GLOBAL'\'')/{N;N;d;}' src/store/proxies.tsx
           sed -i 's/^  switch (lng) {/  switch (lng) {\n    case '\''en'\'':\n      p = import('\''src\/i18n\/en'\'');\n      break;\n    case '\''zh'\'':\n    case '\''zh-CN'\'':\n    default:\n      p = import('\''src\/i18n\/zh'\'');\n      break;\n    }/g' src/misc/i18n.ts
           
