@@ -41,8 +41,8 @@ jobs:
           sed -i 's/<div className={s0.sep}>/<div className={s0.sep} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx
           sed -i '/>Action</d' src/components/Config.tsx
           
-          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/www.gstatic.com\/generate_204/g' src/api/proxies.ts
-          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/www.gstatic.com\/generate_204/g' src/store/app.ts
+          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/www\.apple\.com\/library\/test\/success\.html/g' src/api/proxies.ts
+          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/www\.apple\.com\/library\/test\/success\.html/g' src/store/app.ts
           
           sed -i 's/theme: '\''dark'\''/theme: '\''light'\''/g' src/store/app.ts
           sed -i 's/proxySortBy: '\''Natural'\''/proxySortBy: '\''LatencyAsc'\''/g' src/store/app.ts
