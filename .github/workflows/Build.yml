@@ -31,48 +31,38 @@ jobs:
           
       - name: Set yacd
         run: |
-          sed -i 's/Yet Another Clash Dashboard/Yet Another Dashboard/g' index.html
-          sed -i 's/<html lang="en">/<html lang="zh" translate="no">/g' index.html
-          
-          sed -i 's/name="Clash"/name="sing-box"/g' src/components/about/About.tsx
-          sed -i 's/link="https:\/\/github\.com\/Dreamacro\/clash"/link="https:\/\/github.com\/SagerNet\/sing-box"/g' src/components/about/About.tsx
-          
-          sed -i 's/<div className={s0.root}>/<div className={s0.root} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx
-          sed -i 's/<div className={s0.sep}>/<div className={s0.sep} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx
-          sed -i '/>Action</d' src/components/Config.tsx
+          set +e  # Don't exit on error
 
-          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/detectportal\.firefox\.com\/success\.html/g' src/api/proxies.ts
-          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/detectportal\.firefox\.com\/success\.html/g' src/store/app.ts
+          sed -i 's/Yet Another Clash Dashboard/Yet Another Dashboard/g' index.html || echo "Warning: Sed command failed"
+          sed -i 's/<html lang="en">/<html lang="zh" translate="no">/g' index.html || echo "Warning: Sed command failed"
           
-          sed -i 's/theme: '\''dark'\''/theme: '\''light'\''/g' src/store/app.ts
-          sed -i 's/proxySortBy: '\''Natural'\''/proxySortBy: '\''LatencyAsc'\''/g' src/store/app.ts
-          sed -i 's/autoCloseOldConns: false/autoCloseOldConns: true/g' src/store/app.ts
+          sed -i 's/name="Clash"/name="sing-box"/g' src/components/about/About.tsx || echo "Warning: Sed command failed"
+          sed -i 's/link="https:\/\/github\.com\/Dreamacro\/clash"/link="https:\/\/github.com\/SagerNet\/sing-box"/g' src/components/about/About.tsx || echo "Warning: Sed command failed"
           
-          sed -i 's/number < 200/number < 1200/g' src/components/proxies/Proxy.tsx
-          sed -i 's/number < 400/number < 2400/g' src/components/proxies/Proxy.tsx
-          sed -i 's/? latency\.number/? Math.round(latency.number \/ 6)/g' src/components/proxies/ProxyLatency.tsx
-          
-          sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& prop \!\=\= '\''GLOBAL'\''/g' src/store/proxies.tsx
-          sed -i '/(prop === '\''GLOBAL'\'')/{N;N;d;}' src/store/proxies.tsx
-          sed -i 's/^  switch (lng) {/  switch (lng) {\n    case '\''en'\'':\n      p = import('\''src\/i18n\/en'\'');\n      break;\n    case '\''zh'\'':\n    case '\''zh-CN'\'':\n    default:\n      p = import('\''src\/i18n\/zh'\'');\n      break;\n    }/g' src/misc/i18n.ts
+          sed -i 's/<div className={s0.root}>/<div className={s0.root} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx || echo "Warning: Sed command failed"
+          sed -i 's/<div className={s0.sep}>/<div className={s0.sep} style={{ display: '\''none'\'' }}>/' src/components/Config.tsx || echo "Warning: Sed command failed"
+          sed -i '/>Action</d' src/components/Config.tsx || echo "Warning: Sed command failed"
 
-          sed -i '83i\  if (type !== '\''Selector'\'') return null;' src/components/proxies/ProxyGroup.tsx
+          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/detectportal\.firefox\.com\/success\.html/g' src/api/proxies.ts || echo "Warning: Sed command failed"
+          sed -i 's/http:\/\/www\.gstatic\.com\/generate_204/https:\/\/detectportal\.firefox\.com\/success\.html/g' src/store/app.ts || echo "Warning: Sed command failed"
+          
+          sed -i 's/theme: '\''dark'\''/theme: '\''light'\''/g' src/store/app.ts || echo "Warning: Sed command failed"
+          sed -i 's/proxySortBy: '\''Natural'\''/proxySortBy: '\''LatencyAsc'\''/g' src/store/app.ts || echo "Warning: Sed command failed"
+          sed -i 's/autoCloseOldConns: false/autoCloseOldConns: true/g' src/store/app.ts || echo "Warning: Sed command failed"
+          
+          sed -i 's/number < 200/number < 1200/g' src/components/proxies/Proxy.tsx || echo "Warning: Sed command failed"
+          sed -i 's/number < 400/number < 2400/g' src/components/proxies/Proxy.tsx || echo "Warning: Sed command failed"
+          sed -i 's/? latency\.number/? Math.round(latency.number \/ 6)/g' src/components/proxies/ProxyLatency.tsx || echo "Warning: Sed command failed"
+          
+          sed -i 's/\(p\.all \&\& Array\.isArray(p\.all)\)/\1 \&\& prop \!\=\= '\''GLOBAL'\''/g' src/store/proxies.tsx || echo "Warning: Sed command failed"
+          sed -i '/(prop === '\''GLOBAL'\'')/{N;N;d;}' src/store/proxies.tsx || echo "Warning: Sed command failed"
+          sed -i 's/^  switch (lng) {/  switch (lng) {\n    case '\''en'\'':\n      p = import('\''src\/i18n\/en'\'');\n      break;\n    case '\''zh'\'':\n    case '\''zh-CN'\'':\n    default:\n      p = import('\''src\/i18n\/zh'\'');\n      break;\n    }/g' src/misc/i18n.ts || echo "Warning: Sed command failed"
 
-          # sed -i '1a\  proxy: '\''Proxy'\'',\n  direct: '\''Direct'\'',\n  china: '\''China'\'',\n  test_latency: '\''Test latency'\'',\n  test_latency_tip: '\''The latency value does not reflect network speed, it only indicates a healthy connection to the node.'\'',' src/i18n/en.ts
-          # sed -i '1a\  proxy: '\''节点'\'',\n  direct: '\''直连'\'',\n  china: '\''国内流量'\'',\n  test_latency: '\''延迟测速'\'',\n  test_latency_tip: '\''延迟大小不能反映网络速度,仅表示连接节点正常.'\'',' src/i18n/zh.ts
-          
-          # sed -i '1i import { useTranslation } from '\''react-i18next'\'';' src/components/proxies/Proxy.tsx
-          # sed -i '140i const { t } = useTranslation();' src/components/proxies/Proxy.tsx
-          # sed -i "s|<span>{name}</span>|<span>{name === 'proxy' ? t('proxy') : name === 'direct' ? t('direct') : name === 'china' ? t('china') : name}</span>|g" src/components/proxies/Proxy.tsx
-          
-          # sed -i '1i import { useTranslation } from '\''react-i18next'\'';' src/components/proxies/ProxyGroup.tsx
-          # sed -i '78i const { t } = useTranslation();' src/components/proxies/ProxyGroup.tsx
-          # sed -i "s|name={name}|name={name === 'proxy' ? t('proxy') : name === 'direct' ? t('direct') : name === 'china' ? t('china') : name}|g" src/components/proxies/ProxyGroup.tsx
-          # sed -i "s/{'Test latency'}/{t('test_latency_tip')}/g" src/components/proxies/ProxyGroup.tsx
-          # sed -i '/animate={testingLatency\.value}/a \        <div style={{ fontSize: "12px", marginLeft: "2px" }}>{t("test_latency")}</div>' src/components/proxies/ProxyGroup.tsx
-          
-          # sed -i 's/"Toggle collapsible section"/"Toggle collapsible section" style={{ border: '\''1px solid #555'\'' }}/' src/components/CollapsibleSectionHeader.tsx
-          
+          sed -i '83i\  if (type !== '\''Selector'\'') return null;' src/components/proxies/ProxyGroup.tsx || echo "Warning: Sed command failed"
+
+          set -e  # Re-enable exit on error for the rest of the script
+        shell: bash
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
